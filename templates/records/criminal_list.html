@@ -1,0 +1,29 @@
+{% extends "records/base.html" %}
+{% block title %}Criminal Directory{% endblock %}
+{% block content %}
+<section class="directory-page">
+  <div class="page-header"><div><span class="eyebrow dark">Record directory</span><h1>Criminal records</h1><p>Search identities, locations, charges and case references.</p></div>{% if user.is_authenticated %}<a class="button primary" href="{% url 'criminal-create' %}">+ Add criminal</a>{% endif %}</div>
+  <form class="filter-bar">
+    <input name="q" value="{{ q }}" placeholder="Search ID, name, alias, charge or location">
+    <select name="status"><option value="">All statuses</option>{% for value,label in statuses %}<option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    <select name="gender"><option value="">All genders</option>{% for value,label in genders %}<option value="{{ value }}" {% if selected_gender == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    <button class="button primary">Search</button>
+  </form>
+  <div class="directory-table">
+    <table><thead><tr><th>Identity</th><th>Location</th><th>Status</th><th>Risk</th><th>Charges</th><th>Latest charges</th><th>Total fine</th><th></th></tr></thead><tbody>
+    {% for c in criminals %}
+      <tr>
+        <td><div class="identity"><span class="mini-avatar">{{ c.full_name|slice:":1" }}</span><div><strong>{{ c.full_name }}</strong><small>{{ c.criminal_id }}{% if c.aliases %} • “{{ c.aliases }}”{% endif %}</small></div></div></td>
+        <td>{{ c.last_known_location }}</td>
+        <td><span class="status {{ c.status }}">{{ c.get_status_display }}</span></td>
+        <td><div class="risk-meter"><i style="width:{{ c.risk_score }}%"></i></div><strong>{{ c.risk_score }}</strong></td>
+        <td><strong>{{ c.charges.count }}</strong></td>
+        <td><div class="charge-tags">{% for charge in c.charges.all|slice:":2" %}<span>{{ charge.offence }}</span>{% empty %}<em>No charges</em>{% endfor %}</div></td>
+        <td><strong class="fine-amount">₦{{ c.total_fines|floatformat:2 }}</strong></td>
+        <td><a class="table-action" href="{{ c.get_absolute_url }}">View →</a></td>
+      </tr>
+    {% empty %}<tr><td class="empty" colspan="8">No records matched your search.</td></tr>{% endfor %}
+    </tbody></table>
+  </div>
+</section>
+{% endblock %}

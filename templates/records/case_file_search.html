@@ -1,0 +1,57 @@
+{% extends "records/base.html" %}
+{% block title %}Case File Search{% endblock %}
+{% block content %}
+<section class="case-search-page">
+  <div class="case-search-hero">
+    <span class="eyebrow">Case reference lookup</span>
+    <h1>Search a case file.</h1>
+    <p>Enter a case number, criminal ID, full name, alias or offence to locate the associated case record.</p>
+    <form method="get" class="case-search-form">
+      <div class="case-search-input">
+        <span>⌕</span>
+        <input name="case" value="{{ query }}" placeholder="Example: CR-2026-041, CR-7F4A90B112 or Financial Fraud" autofocus>
+      </div>
+      <button class="button primary" type="submit">Search case files</button>
+    </form>
+  </div>
+
+  {% if searched %}
+  <div class="case-results-head">
+    <div><span class="eyebrow dark">Search results</span><h2>{{ results|length }} matching case{{ results|length|pluralize }}</h2></div>
+    <a href="{% url 'case-file-search' %}">Clear search</a>
+  </div>
+  <div class="case-results-grid">
+    {% for charge in results %}
+    <article class="case-file-card">
+      <div class="case-file-top">
+        <div><span class="case-label">Case number</span><strong>{{ charge.case_number|default:"Not assigned" }}</strong></div>
+        <span class="severity {{ charge.severity }}">{{ charge.get_severity_display }}</span>
+      </div>
+      <h3>{{ charge.offence }}</h3>
+      <p>{{ charge.description|truncatewords:25 }}</p>
+      <dl>
+        <div><dt>Subject</dt><dd>{{ charge.criminal.full_name }}</dd></div>
+        <div><dt>Criminal ID</dt><dd>{{ charge.criminal.criminal_id }}</dd></div>
+        <div><dt>Legal status</dt><dd><span class="status {{ charge.status }}">{{ charge.get_status_display }}</span></dd></div>
+        <div><dt>Court</dt><dd>{{ charge.court_name|default:"Not assigned" }}</dd></div>
+        <div><dt>Date charged</dt><dd>{{ charge.date_charged|default:"Not supplied" }}</dd></div>
+        <div><dt>Officer</dt><dd>{{ charge.criminal.investigating_officer|default:"Unassigned" }}</dd></div>
+      </dl>
+      <a class="case-open-link" href="{{ charge.criminal.get_absolute_url }}">Open complete case profile →</a>
+    </article>
+    {% empty %}
+    <div class="case-empty">
+      <span>⌕</span><h3>No matching case file found</h3>
+      <p>Check the case number or try searching with the criminal name, criminal ID, alias or offence.</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="case-search-help">
+    <article><strong>Case number</strong><span>Search using a court or investigation case reference.</span></article>
+    <article><strong>Criminal identity</strong><span>Use the criminal ID, full name or known alias.</span></article>
+    <article><strong>Offence</strong><span>Find cases by the alleged or convicted offence.</span></article>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

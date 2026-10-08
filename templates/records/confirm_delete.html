@@ -1,0 +1,5 @@
+{% extends "records/base.html" %}
+{% block title %}Confirm deletion{% endblock %}
+{% block content %}
+<section class="confirm-page"><div class="danger-icon">!</div><span class="eyebrow dark">Permanent action</span><h1>Delete this {{ object_type }}?</h1><p><strong>{{ object }}</strong> will be permanently removed. Related data may also be deleted.</p><form method="post">{% csrf_token %}<button class="button danger-button">Yes, delete permanently</button><button class="button secondary dark-secondary" type="button" onclick="history.back()">Cancel</button></form></section>
+{% endblock %}
