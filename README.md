@@ -47,12 +47,6 @@ The project intentionally does not include an old virtual environment or databas
 
 If your browser still displays an older cached page, press `Ctrl + Shift + R` once. The stylesheet should be available at `http://127.0.0.1:8000/static/css/app.css`.
 
-## Administrator login
-
-```text
-Username: chelsea
-Password: Chelsea919!
-```
 
 The login page does not display these credentials.
 
